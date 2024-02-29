@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option go_package = "github.com/matisiekpl/electrocardiogram-server/internal/proto";
+package com.ekg.proto;
+
+message Record {
+  int64 id = 1;
+  int64 value = 2;
+  int64  timestamp = 3;
+}
+
+message Filter {
+  int64 start = 1;
+  int64 end = 2;
+}
+
+message ListRecordsResponse {
+  repeated Record records = 1;
+}
+
+message Empty {
+}
+
+message Analysis {
+  int64 rr = 1;
+  int64 hr = 2;
+  int64 qrs = 3;
+  int64 qt = 4;
+  int64 qtc = 5;
+  int64 p = 6;
+  int64 t = 7;
+}
+
+service Electrocardiogram {
+  rpc ListRecords(Filter) returns (ListRecordsResponse) {}
+  rpc StreamRecords(Empty) returns (stream Record) {}
+  rpc Analyze(Filter) returns (Analysis) {}
+}
