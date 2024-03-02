@@ -1,20 +1,31 @@
 package com.pawlowski.ekgmonitor.ui.screens.chart
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pawlowski.ekgmonitor.domain.Resource
 import com.pawlowski.network.Record
+import kotlinx.coroutines.delay
+import kotlin.math.abs
 
 @Composable
 internal fun ChartScreen(
@@ -23,16 +34,64 @@ internal fun ChartScreen(
 ) {
     when (state.recordsResource) {
         is Resource.Success -> {
-            Chart(
-                records = state.recordsResource.data,
-                colors = ChartColors(),
-            )
+            val scrollOffset =
+                remember {
+                    mutableFloatStateOf(0f)
+                }
+
+            val maxScrollAvailable = state.recordsResource.data.maxScrollAvailable()
+
+            val scrollState =
+                rememberScrollableState { delta ->
+                    scrollOffset.floatValue =
+                        (scrollOffset.floatValue + delta)
+                            .coerceAtLeast(minimumValue = -maxScrollAvailable)
+                            .coerceAtMost(maximumValue = 0f)
+                    delta
+                }
+
+            LaunchedEffect(key1 = Unit) {
+                while (true) {
+                    if (!scrollState.isScrollInProgress) {
+                        scrollState.scrollBy(-(abs(scrollOffset.floatValue) - maxScrollAvailable))
+                    }
+                    delay(10)
+                }
+            }
+
+            Box(
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .scrollable(
+                            state = scrollState,
+                            orientation = Orientation.Horizontal,
+                        ),
+            ) {
+                Chart(
+                    records = state.recordsResource.data,
+                    colors = ChartColors(),
+                    translateOffset = scrollOffset::value,
+                )
+            }
         }
         is Resource.Loading -> {
         }
         is Resource.Error -> {
         }
     }
+}
+
+@Composable
+private fun List<Record>.maxScrollAvailable(): Float {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val density = LocalDensity.current
+
+    val minTimestamp = minOf { it.timestamp }
+    val maxTimestamp = maxOf { it.timestamp }
+    val diff = maxTimestamp - minTimestamp
+    val scaleX = with(density) { screenWidth.toPx() } / WIDTH_TIMESTAMP
+
+    return (diff * scaleX) - with(density) { screenWidth.toPx() }
 }
 
 data class ChartColors(
@@ -44,16 +103,20 @@ const val WIDTH_TIMESTAMP = 5000
 @Composable
 private fun Chart(
     records: List<Record>,
+    translateOffset: () -> Float,
     colors: ChartColors,
 ) {
     val minTimestamp = records.minOf { it.timestamp }
-    val maxTimestamp = records.maxOf { it.timestamp }
-    val maxValue = records.maxOf { it.value }.coerceAtLeast(minimumValue = 10) + 50
+    val maxValue = records.maxOf { it.value }.coerceAtLeast(minimumValue = 1000) + 50
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val density = LocalDensity.current
+
+    val scaleX = with(density) { screenWidth.toPx() } / WIDTH_TIMESTAMP
     Canvas(
         modifier =
-            Modifier.fillMaxSize(),
+            Modifier.fillMaxWidth()
+                .height(300.dp),
     ) {
-        val scaleX = size.width / WIDTH_TIMESTAMP
         val scaleY = size.height / maxValue
 
         val scaledRecords =
@@ -78,14 +141,17 @@ private fun Chart(
                     )
                 }
             }
-        drawPath(
-            path = path,
-            color = colors.lineColor,
-            style =
-                Stroke(
-                    width = 3.dp.toPx(),
-                ),
-        )
+
+        translate(left = translateOffset()) {
+            drawPath(
+                path = path,
+                color = colors.lineColor,
+                style =
+                    Stroke(
+                        width = 3.dp.toPx(),
+                    ),
+            )
+        }
     }
 }
 
