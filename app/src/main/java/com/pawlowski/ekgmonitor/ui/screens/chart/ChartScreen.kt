@@ -30,6 +30,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pawlowski.ekgmonitor.domain.Resource
@@ -148,6 +152,7 @@ private fun Chart(
     val maxValue = records.maxOf { it.value }.coerceAtLeast(minimumValue = 1000) + 50
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val density = LocalDensity.current
+    val textMeasurer = rememberTextMeasurer()
 
     val scaleX = with(density) { screenWidth.toPx() } / WIDTH_TIMESTAMP
     Canvas(
@@ -180,7 +185,10 @@ private fun Chart(
                     )
                 }
             }
-        drawHorizontalHelperLines(maxValue = maxValue * scaleY)
+        drawHorizontalHelperLines(
+            maxValue = maxValue * scaleY,
+            textMeasurer = textMeasurer,
+        )
 
         translate(left = translateOffset()) {
             drawPath(
@@ -195,11 +203,31 @@ private fun Chart(
     }
 }
 
-private fun DrawScope.drawHorizontalHelperLines(maxValue: Float) {
-    val linesCount = 4
+private fun DrawScope.drawHorizontalHelperLines(
+    maxValue: Float,
+    textMeasurer: TextMeasurer,
+) {
+    val step = 100
+    val linesCount = (maxValue / step).toInt()
     repeat(linesCount) {
-        val lineY = it * (maxValue / linesCount)
+        val lineY = it * step
         val lineYSwapped = size.height - lineY
+
+        val textLayoutResult =
+            textMeasurer.measure(
+                text =
+                    buildAnnotatedString {
+                        append(lineY.toInt().toString())
+                    },
+            )
+        drawText(
+            textLayoutResult = textLayoutResult,
+            topLeft =
+                Offset(
+                    x = 0f,
+                    y = lineYSwapped - textLayoutResult.size.height,
+                ),
+        )
 
         drawLine(
             start =
