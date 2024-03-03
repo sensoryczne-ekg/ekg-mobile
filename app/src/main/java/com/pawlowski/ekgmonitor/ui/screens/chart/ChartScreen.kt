@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.LocalConfiguration
@@ -43,7 +44,7 @@ internal fun ChartScreen(
     when (state.recordsResource) {
         is Resource.Success -> {
             Column(
-                verticalArrangement = Arrangement.spacedBy(space = 16.dp)
+                verticalArrangement = Arrangement.spacedBy(space = 16.dp),
             ) {
                 val isAutoScrolling =
                     remember {
@@ -53,7 +54,7 @@ internal fun ChartScreen(
                     selected = isAutoScrolling.value,
                     onClick = { isAutoScrolling.value = !isAutoScrolling.value },
                     label = { Text(text = "Śledzenie") },
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
 
                 val scrollOffset =
@@ -83,12 +84,12 @@ internal fun ChartScreen(
 
                 Box(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .scrollable(
-                            state = scrollState,
-                            orientation = Orientation.Horizontal,
-                        ),
+                        Modifier
+                            .fillMaxWidth()
+                            .scrollable(
+                                state = scrollState,
+                                orientation = Orientation.Horizontal,
+                            ),
                 ) {
                     Chart(
                         records = state.recordsResource.data,
@@ -178,6 +179,7 @@ private fun Chart(
                     )
                 }
             }
+        drawHorizontalHelperLines(maxValue = maxValue * scaleY)
 
         translate(left = translateOffset()) {
             drawPath(
@@ -189,6 +191,29 @@ private fun Chart(
                     ),
             )
         }
+    }
+}
+
+private fun DrawScope.drawHorizontalHelperLines(maxValue: Float) {
+    val linesCount = 4
+    repeat(linesCount) {
+        val lineY = it * (maxValue / linesCount)
+        val lineYSwapped = size.height - lineY
+
+        drawLine(
+            start =
+                Offset(
+                    x = 0f,
+                    y = lineYSwapped,
+                ),
+            end =
+                Offset(
+                    x = size.width,
+                    y = lineYSwapped,
+                ),
+            color = Color.Gray,
+            strokeWidth = 1f,
+        )
     }
 }
 
