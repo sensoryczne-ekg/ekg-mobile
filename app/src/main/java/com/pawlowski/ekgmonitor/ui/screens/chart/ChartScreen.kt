@@ -5,13 +5,21 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -34,49 +42,77 @@ internal fun ChartScreen(
 ) {
     when (state.recordsResource) {
         is Resource.Success -> {
-            val scrollOffset =
-                remember {
-                    mutableFloatStateOf(0f)
-                }
-
-            val maxScrollAvailable = state.recordsResource.data.maxScrollAvailable()
-
-            val scrollState =
-                rememberScrollableState { delta ->
-                    scrollOffset.floatValue =
-                        (scrollOffset.floatValue + delta)
-                            .coerceAtLeast(minimumValue = -maxScrollAvailable)
-                            .coerceAtMost(maximumValue = 0f)
-                    delta
-                }
-
-            LaunchedEffect(key1 = Unit) {
-                while (true) {
-                    if (!scrollState.isScrollInProgress) {
-                        scrollState.scrollBy(-(abs(scrollOffset.floatValue) - maxScrollAvailable))
+            Column(
+                verticalArrangement = Arrangement.spacedBy(space = 16.dp)
+            ) {
+                val isAutoScrolling =
+                    remember {
+                        mutableStateOf(true)
                     }
-                    delay(10)
-                }
-            }
+                FilterChip(
+                    selected = isAutoScrolling.value,
+                    onClick = { isAutoScrolling.value = !isAutoScrolling.value },
+                    label = { Text(text = "Śledzenie") },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
 
-            Box(
-                modifier =
-                    Modifier.fillMaxWidth()
+                val scrollOffset =
+                    remember {
+                        mutableFloatStateOf(0f)
+                    }
+
+                val maxScrollAvailable = state.recordsResource.data.maxScrollAvailable()
+
+                val scrollState =
+                    rememberScrollableState { delta ->
+                        scrollOffset.floatValue =
+                            (scrollOffset.floatValue + delta)
+                                .coerceAtLeast(minimumValue = -maxScrollAvailable)
+                                .coerceAtMost(maximumValue = 0f)
+                        delta
+                    }
+
+                LaunchedEffect(key1 = Unit) {
+                    while (true) {
+                        if (!scrollState.isScrollInProgress && isAutoScrolling.value) {
+                            scrollState.scrollBy(-(abs(scrollOffset.floatValue) - maxScrollAvailable))
+                        }
+                        delay(10)
+                    }
+                }
+
+                Box(
+                    modifier =
+                    Modifier
+                        .fillMaxWidth()
                         .scrollable(
                             state = scrollState,
                             orientation = Orientation.Horizontal,
                         ),
-            ) {
-                Chart(
-                    records = state.recordsResource.data,
-                    colors = ChartColors(),
-                    translateOffset = scrollOffset::value,
-                )
+                ) {
+                    Chart(
+                        records = state.recordsResource.data,
+                        colors = ChartColors(),
+                        translateOffset = scrollOffset::value,
+                    )
+                }
             }
         }
         is Resource.Loading -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                CircularProgressIndicator()
+            }
         }
         is Resource.Error -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                Text(text = "Error")
+            }
         }
     }
 }
@@ -114,7 +150,8 @@ private fun Chart(
     val scaleX = with(density) { screenWidth.toPx() } / WIDTH_TIMESTAMP
     Canvas(
         modifier =
-            Modifier.fillMaxWidth()
+            Modifier
+                .fillMaxWidth()
                 .height(300.dp),
     ) {
         val scaleY = size.height / maxValue
