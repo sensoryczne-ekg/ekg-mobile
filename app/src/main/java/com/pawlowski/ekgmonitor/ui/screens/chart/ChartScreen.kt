@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.translate
@@ -213,6 +214,7 @@ private fun DrawScope.drawHorizontalHelperLines(maxValue: Float) {
                 ),
             color = Color.Gray,
             strokeWidth = 1f,
+            pathEffect = PathEffect.dashPathEffect(intervals = floatArrayOf(10f, 5f)),
         )
     }
 }
