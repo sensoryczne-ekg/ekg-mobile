@@ -15,6 +15,7 @@ internal class GetGrpcChannelUseCase
         override operator fun invoke(): Channel =
             AndroidChannelBuilder
                 .forAddress("srv3.enteam.pl", 6001)
+                .context(context)
                 .usePlaintext()
                 .build()
     }
