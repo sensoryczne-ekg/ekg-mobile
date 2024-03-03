@@ -1,6 +1,6 @@
 package com.pawlowski.network.service
 
-import com.ekg.proto.ElectrocardiogramGrpcKt
+import ElectrocardiogramGrpcKt
 import com.pawlowski.network.channel.IGetGrpcChannelUseCase
 import javax.inject.Inject
 import javax.inject.Singleton

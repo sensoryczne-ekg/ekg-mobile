@@ -1,7 +1,7 @@
 package com.pawlowski.network.dataProvider
 
-import com.ekg.proto.Api
-import com.ekg.proto.ElectrocardiogramGrpcKt
+import Api
+import ElectrocardiogramGrpcKt
 import com.pawlowski.network.IEkgDataProvider
 import com.pawlowski.network.Record
 import com.pawlowski.network.service.IEkgServiceProvider
