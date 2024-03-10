@@ -6,6 +6,8 @@ import com.pawlowski.network.IEkgDataProvider
 import com.pawlowski.network.Record
 import com.pawlowski.network.service.IEkgServiceProvider
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -30,7 +32,11 @@ internal class EkgDataProvider
             method: ElectrocardiogramGrpcKt.ElectrocardiogramCoroutineStub.(REQ) -> Flow<RESP>,
             request: REQ,
         ): Flow<RESP> =
-            ekgServiceProvider
-                .invoke()
-                .method(request)
+            flow {
+                emitAll(
+                    ekgServiceProvider
+                        .invoke()
+                        .method(request),
+                )
+            }
     }

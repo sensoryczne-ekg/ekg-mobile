@@ -4,17 +4,15 @@ import android.app.Application
 import io.grpc.Channel
 import io.grpc.android.AndroidChannelBuilder
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 internal class GetGrpcChannelUseCase
     @Inject
     constructor(
         private val context: Application,
     ) : IGetGrpcChannelUseCase {
-        override operator fun invoke(): Channel =
+        override operator fun invoke(url: String): Channel =
             AndroidChannelBuilder
-                .forAddress("srv3.enteam.pl", 6001)
+                .forAddress(url, 6001)
                 .context(context)
                 .usePlaintext()
                 .build()

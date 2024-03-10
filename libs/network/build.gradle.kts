@@ -37,10 +37,11 @@ android {
 }
 
 dependencies {
+    implementation(project(":libs:dataStore"))
+
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
     implementation(libs.bundles.grpc)
-    implementation(libs.androidx.datastore)
     implementation(platform(libs.org.jetbrains.kotlinx.kotlinx.serialization.bom))
     implementation(libs.bundles.serialization)
 }

@@ -3,5 +3,5 @@ package com.pawlowski.network.service
 import ElectrocardiogramGrpcKt
 
 interface IEkgServiceProvider {
-    operator fun invoke(): ElectrocardiogramGrpcKt.ElectrocardiogramCoroutineStub
+    suspend operator fun invoke(): ElectrocardiogramGrpcKt.ElectrocardiogramCoroutineStub
 }
