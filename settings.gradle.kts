@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "EKG Monitor"
 include(":app")
 include(":libs:network")
+include(":libs:dataStore")
