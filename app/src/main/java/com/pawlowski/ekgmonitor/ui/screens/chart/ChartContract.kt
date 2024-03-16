@@ -5,6 +5,9 @@ import com.pawlowski.network.Record
 
 internal data class ChartState(
     val recordsResource: Resource<List<Record>>,
+    val currentServerAddress: String?,
 )
 
-internal sealed interface ChartEvent
+internal sealed interface ChartEvent {
+    data class ChangeNetwork(val newNetwork: String) : ChartEvent
+}

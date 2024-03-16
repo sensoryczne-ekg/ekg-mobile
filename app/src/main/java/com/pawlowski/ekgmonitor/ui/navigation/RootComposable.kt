@@ -18,6 +18,7 @@ fun RootComposable() {
     NavHost(navController = navController, startDestination = Screen.Chart.name) {
         composable(route = Screen.Chart.name) {
             val viewModel = hiltViewModel<ChartViewModel>()
+            viewModel.observeRecordsFlow.collectAsState() // TODO: Add lib with collectAsStateWithLifecycle
             ChartScreen(
                 state = viewModel.stateFlow.collectAsState().value,
                 onNewEvent = viewModel::onNewEvent,

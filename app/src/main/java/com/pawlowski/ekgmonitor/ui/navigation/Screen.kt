@@ -16,6 +16,11 @@ sealed interface Screen {
             SERVER_SETTINGS(
                 destination = Settings,
             ),
+            CHART_WITH_REFRESH(
+                Chart,
+                popUpTo = Chart,
+                popUpToInclusive = true,
+            ),
         }
     }
 

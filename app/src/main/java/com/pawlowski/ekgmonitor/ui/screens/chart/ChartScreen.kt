@@ -16,9 +16,11 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -37,6 +39,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pawlowski.ekgmonitor.domain.Resource
+import com.pawlowski.ekgmonitor.ui.screens.settings.ChangeNetworkBottomSheet
 import com.pawlowski.network.Record
 import kotlinx.coroutines.delay
 import kotlin.math.abs
@@ -46,6 +49,17 @@ internal fun ChartScreen(
     state: ChartState,
     onNewEvent: (ChartEvent) -> Unit,
 ) {
+    var showChangeNetworkBottomSheet by remember {
+        mutableStateOf(false)
+    }
+    ChangeNetworkBottomSheet(
+        show = showChangeNetworkBottomSheet,
+        onDismiss = { showChangeNetworkBottomSheet = false },
+        initialAddress = state.currentServerAddress ?: "",
+        onConfirm = {
+            onNewEvent(ChartEvent.ChangeNetwork(it))
+        },
+    )
     when (state.recordsResource) {
         is Resource.Success -> {
             Column(
@@ -217,7 +231,7 @@ private fun DrawScope.drawHorizontalHelperLines(
             textMeasurer.measure(
                 text =
                     buildAnnotatedString {
-                        append(lineY.toInt().toString())
+                        append(lineY.toString())
                     },
             )
         drawText(
@@ -269,6 +283,7 @@ private fun ChartScreenPreview() {
                                 )
                             },
                     ),
+                currentServerAddress = "",
             ),
     ) {}
 }
