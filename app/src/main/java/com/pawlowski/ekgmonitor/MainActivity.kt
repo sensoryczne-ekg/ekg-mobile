@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.pawlowski.ekgmonitor.ui.screens.chart.ChartDestination
+import com.pawlowski.ekgmonitor.ui.navigation.RootComposable
 import com.pawlowski.ekgmonitor.ui.theme.EKGMonitorTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,7 +21,7 @@ internal class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    ChartDestination()
+                    RootComposable()
                 }
             }
         }

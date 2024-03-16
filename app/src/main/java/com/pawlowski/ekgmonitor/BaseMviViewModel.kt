@@ -1,18 +1,34 @@
 package com.pawlowski.ekgmonitor
 
 import androidx.lifecycle.ViewModel
+import com.pawlowski.ekgmonitor.ui.navigation.Back
+import com.pawlowski.ekgmonitor.ui.navigation.Direction
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class BaseMviViewModel<STATE, EVENT>(
+abstract class BaseMviViewModel<STATE, EVENT, DIRECTION : Direction>(
     val initialState: STATE,
 ) : ViewModel() {
     private val wasInitialisedCalled = AtomicBoolean(false)
 
     protected open fun initialised() {}
+
+    private val navigationChannel = Channel<Direction>(Channel.CONFLATED)
+
+    val navigationFlow = navigationChannel.receiveAsFlow()
+
+    protected fun pushNavigationEvent(direction: DIRECTION) {
+        navigationChannel.trySend(direction)
+    }
+
+    protected fun pushNavigationEvent(direction: Back) {
+        navigationChannel.trySend(direction)
+    }
 
     private val mutableStateFlow = MutableStateFlow(initialState)
     val stateFlow =

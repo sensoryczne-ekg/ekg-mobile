@@ -5,6 +5,7 @@ import com.pawlowski.ekgmonitor.BaseMviViewModel
 import com.pawlowski.ekgmonitor.domain.Resource
 import com.pawlowski.ekgmonitor.domain.getDataOrNull
 import com.pawlowski.ekgmonitor.domain.useCase.StreamRecords
+import com.pawlowski.ekgmonitor.ui.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
@@ -16,7 +17,7 @@ internal class ChartViewModel
     @Inject
     constructor(
         private val streamRecords: StreamRecords,
-    ) : BaseMviViewModel<ChartState, ChartEvent>(
+    ) : BaseMviViewModel<ChartState, ChartEvent, Screen.Chart.ChartDirection>(
             initialState = ChartState(recordsResource = Resource.Loading),
         ) {
         override fun initialised() {
