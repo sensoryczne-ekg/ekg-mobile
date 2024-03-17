@@ -95,7 +95,9 @@ internal fun ChartScreen(
                 LaunchedEffect(key1 = Unit) {
                     while (true) {
                         if (!scrollState.isScrollInProgress && isAutoScrolling.value) {
-                            scrollState.scrollBy(-(abs(scrollOffset.floatValue) - maxScrollAvailable))
+                            runCatching {
+                                scrollState.scrollBy(-(abs(scrollOffset.floatValue) - maxScrollAvailable))
+                            }
                         }
                         delay(10)
                     }
