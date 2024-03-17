@@ -13,28 +13,8 @@ sealed interface Screen {
             override val popUpTo: Screen? = null,
             override val popUpToInclusive: Boolean = false,
         ) : Direction {
-            SERVER_SETTINGS(
-                destination = Settings,
-            ),
             CHART_WITH_REFRESH(
                 Chart,
-                popUpTo = Chart,
-                popUpToInclusive = true,
-            ),
-        }
-    }
-
-    data object Settings : Screen {
-        override val name: String = "Chart"
-        override val directions: List<Direction> = SettingsDirection.entries
-
-        enum class SettingsDirection(
-            override val destination: Screen,
-            override val popUpTo: Screen? = null,
-            override val popUpToInclusive: Boolean = false,
-        ) : Direction {
-            CHART(
-                destination = Chart,
                 popUpTo = Chart,
                 popUpToInclusive = true,
             ),
