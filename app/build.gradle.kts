@@ -85,4 +85,6 @@ dependencies {
     implementation(libs.bundles.serialization)
 
     implementation(libs.androidx.material.icons.extended)
+
+    implementation(libs.androidx.lifecycle.runtime.compose)
 }

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,7 +19,7 @@ fun RootComposable() {
     NavHost(navController = navController, startDestination = Screen.Chart.name) {
         composable(route = Screen.Chart.name) {
             val viewModel = hiltViewModel<ChartViewModel>()
-            viewModel.observeRecordsFlow.collectAsState() // TODO: Add lib with collectAsStateWithLifecycle
+            viewModel.observeRecordsFlow.collectAsStateWithLifecycle()
             ChartScreen(
                 state = viewModel.stateFlow.collectAsState().value,
                 onNewEvent = viewModel::onNewEvent,
