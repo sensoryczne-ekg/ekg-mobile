@@ -3,5 +3,8 @@ package com.pawlowski.network.channel
 import io.grpc.Channel
 
 internal interface IGetGrpcChannelUseCase {
-    operator fun invoke(url: String): Channel
+    operator fun invoke(
+        url: String,
+        port: Int,
+    ): Channel
 }

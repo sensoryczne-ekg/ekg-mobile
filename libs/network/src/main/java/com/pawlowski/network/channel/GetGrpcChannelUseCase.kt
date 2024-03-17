@@ -10,9 +10,12 @@ internal class GetGrpcChannelUseCase
     constructor(
         private val context: Application,
     ) : IGetGrpcChannelUseCase {
-        override operator fun invoke(url: String): Channel =
+        override operator fun invoke(
+            url: String,
+            port: Int,
+        ): Channel =
             AndroidChannelBuilder
-                .forAddress(url, 6001)
+                .forAddress(url, port)
                 .context(context)
                 .usePlaintext()
                 .build()

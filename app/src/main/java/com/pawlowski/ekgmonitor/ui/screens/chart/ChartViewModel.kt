@@ -45,10 +45,10 @@ internal class ChartViewModel
 
         override fun onNewEvent(event: ChartEvent) {
             when (event) {
-                is ChartEvent.ChangeNetwork -> {
+                is ChartEvent.ChangeServerAddress -> {
                     viewModelScope.launch {
                         runCatching {
-                            serverAddressRepository.changeServerAddress(newAddress = event.newNetwork)
+                            serverAddressRepository.changeServerAddress(newAddress = event.newAddress)
                             pushNavigationEvent(Screen.Chart.ChartDirection.CHART_WITH_REFRESH)
                         }.onFailure {
                             ensureActive()

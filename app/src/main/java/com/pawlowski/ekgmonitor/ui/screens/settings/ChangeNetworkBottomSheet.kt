@@ -20,14 +20,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.pawlowski.datastore.ServerAddress
 import com.pawlowski.ekgmonitor.ui.BaseBottomSheet
 
 @Composable
 internal fun ChangeNetworkBottomSheet(
     show: Boolean,
     onDismiss: () -> Unit,
-    initialAddress: String,
-    onConfirm: (String) -> Unit,
+    initialAddress: ServerAddress,
+    onConfirm: (ServerAddress) -> Unit,
 ) {
     BaseBottomSheet(show = show, onDismiss = onDismiss) {
         Column(
@@ -47,31 +48,60 @@ internal fun ChangeNetworkBottomSheet(
                 remember {
                     mutableStateOf(false)
                 }
-            val addressState =
+            val urlState =
                 remember(initialAddress) {
-                    mutableStateOf(initialAddress)
+                    mutableStateOf(initialAddress.url)
                 }
             TextField(
-                value = addressState.value,
+                value = urlState.value,
                 label = {
-                    Text(text = "Adres serwera")
+                    Text(text = "Url serwera")
                 },
                 onValueChange = {
-                    addressState.value = it
+                    urlState.value = urlState.value
                 },
                 keyboardOptions =
                     KeyboardOptions(
                         keyboardType = KeyboardType.Text,
                     ),
-                isError = addressState.value.isBlank() && showErrorIfAny.value,
+                singleLine = true,
+                isError = urlState.value.isBlank() && showErrorIfAny.value,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            val portState =
+                remember(initialAddress) {
+                    mutableStateOf(initialAddress.port.toString())
+                }
+            TextField(
+                value = portState.value,
+                label = {
+                    Text(text = "Port serwera")
+                },
+                onValueChange = { newPort ->
+                    portState.value = newPort
+                },
+                keyboardOptions =
+                    KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                    ),
+                isError =
+                    (portState.value.isBlank() || portState.value.toIntOrNull() == null) &&
+                        showErrorIfAny.value,
+                singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
 
             Button(
                 onClick = {
-                    if (addressState.value.isNotBlank()) {
+                    val portOrNull = portState.value.toIntOrNull()
+                    if (urlState.value.isNotBlank() && portOrNull != null) {
                         hideBottomSheetWithAction {
-                            onConfirm(addressState.value)
+                            onConfirm(
+                                ServerAddress(
+                                    url = urlState.value,
+                                    port = portOrNull,
+                                ),
+                            )
                         }
                     } else {
                         showErrorIfAny.value = true

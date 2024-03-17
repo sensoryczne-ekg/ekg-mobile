@@ -10,7 +10,5 @@ internal class ServerAddressSerializer
             kSerializer = ServerAddressDataStoreModel.serializer(),
         ) {
         override val defaultValue: ServerAddressDataStoreModel =
-            ServerAddressDataStoreModel(
-                address = "srv3.enteam.pl",
-            )
+            ServerAddressDataStoreModel()
     }

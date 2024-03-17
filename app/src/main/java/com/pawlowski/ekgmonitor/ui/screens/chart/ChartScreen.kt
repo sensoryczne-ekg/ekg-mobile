@@ -63,15 +63,18 @@ internal fun ChartScreen(
         ) {
             Icon(Icons.Rounded.Settings, contentDescription = "")
         }
-        ChangeNetworkBottomSheet(
-            show = showChangeNetworkBottomSheet,
-            onDismiss = { showChangeNetworkBottomSheet = false },
-            initialAddress = state.currentServerAddress ?: "",
-            onConfirm = {
-                onNewEvent(ChartEvent.ChangeNetwork(it))
-                showChangeNetworkBottomSheet = false
-            },
-        )
+        state.currentServerAddress?.let {
+            ChangeNetworkBottomSheet(
+                show = showChangeNetworkBottomSheet,
+                onDismiss = { showChangeNetworkBottomSheet = false },
+                initialAddress = state.currentServerAddress,
+                onConfirm = {
+                    onNewEvent(ChartEvent.ChangeServerAddress(it))
+                    showChangeNetworkBottomSheet = false
+                },
+            )
+        }
+
         when (state.recordsResource) {
             is Resource.Success -> {
                 Column(
@@ -298,7 +301,7 @@ private fun ChartScreenPreview() {
                                 )
                             },
                     ),
-                currentServerAddress = "",
+                currentServerAddress = null,
             ),
     ) {}
 }

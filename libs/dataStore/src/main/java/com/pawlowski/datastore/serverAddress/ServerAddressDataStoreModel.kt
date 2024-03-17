@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 internal data class ServerAddressDataStoreModel(
-    val address: String,
+    val address: String = "srv3.enteam.pl",
+    val port: Int = 6001,
 )
