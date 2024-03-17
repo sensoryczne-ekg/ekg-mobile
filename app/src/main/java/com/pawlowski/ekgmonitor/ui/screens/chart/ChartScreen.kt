@@ -203,36 +203,47 @@ private fun Chart(
                 )
             }
 
-        val path =
-            Path().apply {
-                val firstPoint = scaledRecords.first()
-                moveTo(
-                    x = firstPoint.x,
-                    y = firstPoint.y,
-                )
-                scaledRecords.drop(1).forEach { record ->
-                    lineTo(
-                        x = record.x,
-                        y = record.y,
-                    )
-                }
-            }
         drawHorizontalHelperLines(
             maxValue = maxValue * scaleY,
             textMeasurer = textMeasurer,
         )
 
         translate(left = translateOffset()) {
-            drawPath(
-                path = path,
-                color = colors.lineColor,
-                style =
-                    Stroke(
-                        width = 3.dp.toPx(),
-                    ),
+            drawRecordsPath(
+                recordsPoints = scaledRecords,
+                colors = colors,
             )
         }
     }
+}
+
+private fun DrawScope.drawRecordsPath(
+    recordsPoints: List<Offset>,
+    colors: ChartColors,
+) {
+    val path =
+        Path().apply {
+            val firstPoint = recordsPoints.first()
+            moveTo(
+                x = firstPoint.x,
+                y = firstPoint.y,
+            )
+            recordsPoints.drop(1).forEach { record ->
+                lineTo(
+                    x = record.x,
+                    y = record.y,
+                )
+            }
+        }
+
+    drawPath(
+        path = path,
+        color = colors.lineColor,
+        style =
+            Stroke(
+                width = 3.dp.toPx(),
+            ),
+    )
 }
 
 private fun DrawScope.drawHorizontalHelperLines(
