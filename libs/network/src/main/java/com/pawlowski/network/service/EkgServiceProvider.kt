@@ -26,7 +26,7 @@ internal class EkgServiceProvider
                 val currentServerUrl = serverAddressRepository.getServerAddress()
                 val lastService = service
                 if (lastServerUrl != currentServerUrl || lastService == null) {
-                    getGrpcChannelUseCase(url = "srv3.enteam.pl").let { channel ->
+                    getGrpcChannelUseCase(url = currentServerUrl).let { channel ->
                         ElectrocardiogramGrpcKt.ElectrocardiogramCoroutineStub(channel)
                     }.also {
                         service = it

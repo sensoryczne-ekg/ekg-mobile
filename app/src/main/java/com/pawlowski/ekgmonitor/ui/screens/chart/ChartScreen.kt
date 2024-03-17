@@ -11,8 +11,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,91 +53,100 @@ internal fun ChartScreen(
     state: ChartState,
     onNewEvent: (ChartEvent) -> Unit,
 ) {
-    var showChangeNetworkBottomSheet by remember {
-        mutableStateOf(false)
-    }
-    ChangeNetworkBottomSheet(
-        show = showChangeNetworkBottomSheet,
-        onDismiss = { showChangeNetworkBottomSheet = false },
-        initialAddress = state.currentServerAddress ?: "",
-        onConfirm = {
-            onNewEvent(ChartEvent.ChangeNetwork(it))
-        },
-    )
-    when (state.recordsResource) {
-        is Resource.Success -> {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(space = 16.dp),
-            ) {
-                val isAutoScrolling =
-                    remember {
-                        mutableStateOf(true)
-                    }
-                FilterChip(
-                    selected = isAutoScrolling.value,
-                    onClick = { isAutoScrolling.value = !isAutoScrolling.value },
-                    label = { Text(text = "Śledzenie") },
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                )
-
-                val scrollOffset =
-                    remember {
-                        mutableFloatStateOf(0f)
-                    }
-
-                val maxScrollAvailable = state.recordsResource.data.maxScrollAvailable()
-
-                val scrollState =
-                    rememberScrollableState { delta ->
-                        scrollOffset.floatValue =
-                            (scrollOffset.floatValue + delta)
-                                .coerceAtLeast(minimumValue = -maxScrollAvailable)
-                                .coerceAtMost(maximumValue = 0f)
-                        delta
-                    }
-
-                LaunchedEffect(key1 = Unit) {
-                    while (true) {
-                        if (!scrollState.isScrollInProgress && isAutoScrolling.value) {
-                            runCatching {
-                                scrollState.scrollBy(-(abs(scrollOffset.floatValue) - maxScrollAvailable))
-                            }
-                        }
-                        delay(10)
-                    }
-                }
-
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .scrollable(
-                                state = scrollState,
-                                orientation = Orientation.Horizontal,
-                            ),
+    Column {
+        var showChangeNetworkBottomSheet by remember {
+            mutableStateOf(false)
+        }
+        IconButton(
+            onClick = { showChangeNetworkBottomSheet = true },
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+        ) {
+            Icon(Icons.Rounded.Settings, contentDescription = "")
+        }
+        ChangeNetworkBottomSheet(
+            show = showChangeNetworkBottomSheet,
+            onDismiss = { showChangeNetworkBottomSheet = false },
+            initialAddress = state.currentServerAddress ?: "",
+            onConfirm = {
+                onNewEvent(ChartEvent.ChangeNetwork(it))
+                showChangeNetworkBottomSheet = false
+            },
+        )
+        when (state.recordsResource) {
+            is Resource.Success -> {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(space = 16.dp),
                 ) {
-                    Chart(
-                        records = state.recordsResource.data,
-                        colors = ChartColors(),
-                        translateOffset = scrollOffset::value,
+                    val isAutoScrolling =
+                        remember {
+                            mutableStateOf(true)
+                        }
+                    FilterChip(
+                        selected = isAutoScrolling.value,
+                        onClick = { isAutoScrolling.value = !isAutoScrolling.value },
+                        label = { Text(text = "Śledzenie") },
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
                     )
+
+                    val scrollOffset =
+                        remember {
+                            mutableFloatStateOf(0f)
+                        }
+
+                    val maxScrollAvailable = state.recordsResource.data.maxScrollAvailable()
+
+                    val scrollState =
+                        rememberScrollableState { delta ->
+                            scrollOffset.floatValue =
+                                (scrollOffset.floatValue + delta)
+                                    .coerceAtLeast(minimumValue = -maxScrollAvailable)
+                                    .coerceAtMost(maximumValue = 0f)
+                            delta
+                        }
+
+                    LaunchedEffect(key1 = Unit) {
+                        while (true) {
+                            if (!scrollState.isScrollInProgress && isAutoScrolling.value) {
+                                runCatching {
+                                    scrollState.scrollBy(-(abs(scrollOffset.floatValue) - maxScrollAvailable))
+                                }
+                            }
+                            delay(10)
+                        }
+                    }
+
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .scrollable(
+                                    state = scrollState,
+                                    orientation = Orientation.Horizontal,
+                                ),
+                    ) {
+                        Chart(
+                            records = state.recordsResource.data,
+                            colors = ChartColors(),
+                            translateOffset = scrollOffset::value,
+                        )
+                    }
                 }
             }
-        }
-        is Resource.Loading -> {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                CircularProgressIndicator()
+            is Resource.Loading -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-        }
-        is Resource.Error -> {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                Text(text = "Error")
+            is Resource.Error -> {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Text(text = "Error")
+                }
             }
         }
     }

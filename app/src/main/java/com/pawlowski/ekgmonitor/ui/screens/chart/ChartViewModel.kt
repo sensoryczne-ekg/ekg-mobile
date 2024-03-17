@@ -8,6 +8,7 @@ import com.pawlowski.ekgmonitor.domain.getDataOrNull
 import com.pawlowski.ekgmonitor.domain.useCase.StreamRecords
 import com.pawlowski.ekgmonitor.ui.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -49,6 +50,9 @@ internal class ChartViewModel
                         runCatching {
                             serverAddressRepository.changeServerAddress(newAddress = event.newNetwork)
                             pushNavigationEvent(Screen.Chart.ChartDirection.CHART_WITH_REFRESH)
+                        }.onFailure {
+                            ensureActive()
+                            it.printStackTrace()
                         }
                     }
                 }
