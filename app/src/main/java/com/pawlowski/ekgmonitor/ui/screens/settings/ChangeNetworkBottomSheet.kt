@@ -58,7 +58,7 @@ internal fun ChangeNetworkBottomSheet(
                     Text(text = "Url serwera")
                 },
                 onValueChange = {
-                    urlState.value = urlState.value
+                    urlState.value = it
                 },
                 keyboardOptions =
                     KeyboardOptions(
