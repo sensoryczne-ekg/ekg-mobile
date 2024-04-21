@@ -204,7 +204,8 @@ private fun Chart(
             }
 
         drawHorizontalHelperLines(
-            maxValue = maxValue * scaleY,
+            maxValue = maxValue,
+            scaleY = scaleY,
             textMeasurer = textMeasurer,
         )
 
@@ -247,14 +248,16 @@ private fun DrawScope.drawRecordsPath(
 }
 
 private fun DrawScope.drawHorizontalHelperLines(
-    maxValue: Float,
+    maxValue: Long,
+    scaleY: Float,
     textMeasurer: TextMeasurer,
 ) {
     val step = 100
     val linesCount = (maxValue / step).toInt()
     repeat(linesCount) {
         val lineY = it * step
-        val lineYSwapped = size.height - lineY
+        val lineYScaled = lineY * scaleY
+        val lineYSwapped = size.height - lineYScaled
 
         val textLayoutResult =
             textMeasurer.measure(
