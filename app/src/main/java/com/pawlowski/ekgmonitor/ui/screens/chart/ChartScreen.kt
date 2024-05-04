@@ -2,8 +2,10 @@ package com.pawlowski.ekgmonitor.ui.screens.chart
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -31,12 +33,24 @@ internal fun ChartScreen(
         var showChangeNetworkBottomSheet by remember {
             mutableStateOf(false)
         }
-        IconButton(
-            onClick = { showChangeNetworkBottomSheet = true },
+        Row(
             modifier = Modifier.align(Alignment.CenterHorizontally),
         ) {
-            Icon(Icons.Rounded.Settings, contentDescription = "")
+            IconButton(
+                onClick = { showChangeNetworkBottomSheet = true },
+            ) {
+                Icon(Icons.Rounded.Settings, contentDescription = "")
+            }
+            IconButton(
+                onClick = { onNewEvent(ChartEvent.HistoryClick) },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.History,
+                    contentDescription = null,
+                )
+            }
         }
+
         state.currentServerAddress?.let {
             ChangeNetworkBottomSheet(
                 show = showChangeNetworkBottomSheet,

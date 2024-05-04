@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.pawlowski.ekgmonitor.ui.screens.chart.ChartScreen
 import com.pawlowski.ekgmonitor.ui.screens.chart.ChartViewModel
+import com.pawlowski.ekgmonitor.ui.screens.choosePeriod.ChoosePeriodScreen
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -25,6 +26,23 @@ fun RootComposable() {
                 onNewEvent = viewModel::onNewEvent,
             )
             viewModel.navigationFlow.observeNavigation(navController = navController)
+        }
+        composable(route = Screen.ChoosePeriod.name) {
+            ChoosePeriodScreen(
+                onConfirmClick = { from, to ->
+                    // TODO
+                    /*navController.navigate(
+                        route = "History/${
+                            from.toInstant(timeZone = TimeZone.currentSystemDefault()).epochSeconds
+                        }/${
+                            to.toInstant(timeZone = TimeZone.currentSystemDefault()).epochSeconds
+                        }",
+                    )*/
+                },
+                onBackClick = {
+                    navController.popBackStack()
+                },
+            )
         }
     }
 }

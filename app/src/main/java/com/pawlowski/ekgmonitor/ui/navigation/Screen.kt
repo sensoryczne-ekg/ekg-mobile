@@ -14,11 +14,25 @@ sealed interface Screen {
             override val popUpToInclusive: Boolean = false,
         ) : Direction {
             CHART_WITH_REFRESH(
-                Chart,
+                destination = Chart,
                 popUpTo = Chart,
                 popUpToInclusive = true,
             ),
+            CHOOSE_PERIOD(
+                destination = ChoosePeriod,
+            ),
         }
+    }
+
+    data object ChoosePeriod : Screen {
+        override val name: String = "ChoosePeriod"
+        override val directions: List<Direction> = ChoosePeriodDirection.entries
+
+        enum class ChoosePeriodDirection(
+            override val destination: Screen,
+            override val popUpTo: Screen? = null,
+            override val popUpToInclusive: Boolean = false,
+        ) : Direction
     }
 
     // Needed for navigating back

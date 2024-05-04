@@ -11,4 +11,6 @@ internal data class ChartState(
 
 internal sealed interface ChartEvent {
     data class ChangeServerAddress(val newAddress: ServerAddress) : ChartEvent
+
+    data object HistoryClick : ChartEvent
 }

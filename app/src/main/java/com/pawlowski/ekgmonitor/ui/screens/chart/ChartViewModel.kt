@@ -6,7 +6,7 @@ import com.pawlowski.ekgmonitor.BaseMviViewModel
 import com.pawlowski.ekgmonitor.domain.Resource
 import com.pawlowski.ekgmonitor.domain.getDataOrNull
 import com.pawlowski.ekgmonitor.domain.useCase.StreamRecords
-import com.pawlowski.ekgmonitor.ui.navigation.Screen
+import com.pawlowski.ekgmonitor.ui.navigation.Screen.Chart.ChartDirection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,7 +23,7 @@ internal class ChartViewModel
     constructor(
         private val streamRecords: StreamRecords,
         private val serverAddressRepository: IServerAddressRepository,
-    ) : BaseMviViewModel<ChartState, ChartEvent, Screen.Chart.ChartDirection>(
+    ) : BaseMviViewModel<ChartState, ChartEvent, ChartDirection>(
             initialState =
                 ChartState(
                     recordsResource = Resource.Loading,
@@ -49,13 +49,15 @@ internal class ChartViewModel
                     viewModelScope.launch {
                         runCatching {
                             serverAddressRepository.changeServerAddress(newAddress = event.newAddress)
-                            pushNavigationEvent(Screen.Chart.ChartDirection.CHART_WITH_REFRESH)
+                            pushNavigationEvent(ChartDirection.CHART_WITH_REFRESH)
                         }.onFailure {
                             ensureActive()
                             it.printStackTrace()
                         }
                     }
                 }
+
+                ChartEvent.HistoryClick -> pushNavigationEvent(ChartDirection.CHOOSE_PERIOD)
             }
         }
 
