@@ -2,8 +2,8 @@ package com.pawlowski.network.dataProvider
 
 import Api
 import ElectrocardiogramGrpcKt
+import com.pawlowski.network.EkgRecord
 import com.pawlowski.network.IEkgDataProvider
-import com.pawlowski.network.Record
 import com.pawlowski.network.service.IEkgServiceProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -16,12 +16,12 @@ internal class EkgDataProvider
     constructor(
         private val ekgServiceProvider: IEkgServiceProvider,
     ) : IEkgDataProvider {
-        override fun streamRecords(): Flow<Record> =
+        override fun streamRecords(): Flow<EkgRecord> =
             withStreamService(
                 method = ElectrocardiogramGrpcKt.ElectrocardiogramCoroutineStub::streamRecords,
                 request = Api.Empty.getDefaultInstance(),
             ).map {
-                Record(
+                EkgRecord(
                     id = it.id,
                     value = it.value,
                     timestamp = it.timestamp,

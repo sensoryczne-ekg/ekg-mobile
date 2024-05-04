@@ -29,6 +29,10 @@ lottie = "5.2.0"
 
 hilt-workmanager = "1.0.0"
 
+kotlinx-datetime = "0.6.0-RC.2"
+kotlinx-collections-immutable = "0.3.7"
+
+
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-runtime-ktx" }
@@ -84,6 +88,10 @@ hilt-workmanager-compiler = { module = "androidx.hilt:hilt-compiler", version.re
 com-android-tools-build-gradle = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 org-jetbrains-kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 com-squareup-javapoet = "com.squareup:javapoet:1.13.0"
+
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
+
 
 
 [plugins]
