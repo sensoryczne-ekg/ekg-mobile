@@ -358,7 +358,7 @@ private fun DrawScope.drawHorizontalHelperLines(
     scaleY: Float,
     textMeasurer: TextMeasurer,
 ) {
-    val step = 10
+    val step = 100
     val linesCount = (maxHelperValue / step).toInt()
     repeat(linesCount) {
         val lineY = it * step
