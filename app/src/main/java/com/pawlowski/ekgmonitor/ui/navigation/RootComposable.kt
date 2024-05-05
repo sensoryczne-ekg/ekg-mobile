@@ -14,13 +14,13 @@ import androidx.navigation.navArgument
 import com.pawlowski.ekgmonitor.ui.screens.chart.ChartScreen
 import com.pawlowski.ekgmonitor.ui.screens.chart.ChartViewModel
 import com.pawlowski.ekgmonitor.ui.screens.choosePeriod.ChoosePeriodScreen
-import com.pawlowski.ekgmonitor.ui.screens.history.HistoryScreen
+import com.pawlowski.ekgmonitor.ui.screens.history.HistoryDestination
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 
 @Composable
-fun RootComposable() {
+internal fun RootComposable() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.Chart.name) {
         composable(route = Screen.Chart.name) {
@@ -60,7 +60,7 @@ fun RootComposable() {
                     },
                 ),
         ) {
-            HistoryScreen()
+            HistoryDestination()
         }
     }
 }

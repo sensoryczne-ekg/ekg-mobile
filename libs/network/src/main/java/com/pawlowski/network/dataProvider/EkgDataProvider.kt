@@ -21,12 +21,30 @@ internal class EkgDataProvider
                 method = ElectrocardiogramGrpcKt.ElectrocardiogramCoroutineStub::streamRecords,
                 request = Api.Empty.getDefaultInstance(),
             ).map {
-                EkgRecord(
-                    id = it.id,
-                    value = it.value,
-                    timestamp = it.timestamp,
-                )
+                it.toDomain()
             }
+
+        override suspend fun getRecords(
+            from: Long,
+            to: Long,
+        ): List<EkgRecord> =
+            withUnaryService(
+                method = ElectrocardiogramGrpcKt.ElectrocardiogramCoroutineStub::listRecords,
+                request =
+                    Api.Filter.newBuilder()
+                        .setStart(from)
+                        .setEnd(to)
+                        .build(),
+            ).recordsList.map {
+                it.toDomain()
+            }
+
+        private fun Api.Record.toDomain(): EkgRecord =
+            EkgRecord(
+                id = id,
+                value = value,
+                timestamp = timestamp,
+            )
 
         private fun <REQ : Any, RESP : Any> withStreamService(
             method: ElectrocardiogramGrpcKt.ElectrocardiogramCoroutineStub.(REQ) -> Flow<RESP>,
@@ -39,4 +57,12 @@ internal class EkgDataProvider
                         .method(request),
                 )
             }
+
+        private suspend fun <REQ : Any, RESP : Any> withUnaryService(
+            method: suspend ElectrocardiogramGrpcKt.ElectrocardiogramCoroutineStub.(REQ) -> RESP,
+            request: REQ,
+        ): RESP =
+            ekgServiceProvider
+                .invoke()
+                .method(request)
     }

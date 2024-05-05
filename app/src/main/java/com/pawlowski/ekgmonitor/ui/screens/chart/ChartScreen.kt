@@ -10,7 +10,6 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.pawlowski.ekgmonitor.domain.Resource
+import com.pawlowski.ekgmonitor.ui.components.errorItem.ErrorItem
 import com.pawlowski.ekgmonitor.ui.screens.settings.ChangeNetworkBottomSheet
 import com.pawlowski.network.EkgRecord
 import kotlinx.collections.immutable.toPersistentList
@@ -76,12 +76,11 @@ internal fun ChartScreen(
                 }
             }
             is Resource.Error -> {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize(),
-                ) {
-                    Text(text = "Error")
-                }
+                ErrorItem(
+                    onRetryClick = {
+                        onNewEvent(ChartEvent.RetryClick)
+                    },
+                )
             }
         }
     }

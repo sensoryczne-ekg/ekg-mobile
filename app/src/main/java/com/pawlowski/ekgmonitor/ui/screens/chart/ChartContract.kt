@@ -13,4 +13,6 @@ internal sealed interface ChartEvent {
     data class ChangeServerAddress(val newAddress: ServerAddress) : ChartEvent
 
     data object HistoryClick : ChartEvent
+
+    data object RetryClick : ChartEvent
 }
