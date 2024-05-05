@@ -6,13 +6,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.pawlowski.ekgmonitor.ui.screens.chart.ChartScreen
 import com.pawlowski.ekgmonitor.ui.screens.chart.ChartViewModel
 import com.pawlowski.ekgmonitor.ui.screens.choosePeriod.ChoosePeriodScreen
+import com.pawlowski.ekgmonitor.ui.screens.history.HistoryScreen
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 
 @Composable
 fun RootComposable() {
@@ -30,19 +35,32 @@ fun RootComposable() {
         composable(route = Screen.ChoosePeriod.name) {
             ChoosePeriodScreen(
                 onConfirmClick = { from, to ->
-                    // TODO
-                    /*navController.navigate(
-                        route = "History/${
-                            from.toInstant(timeZone = TimeZone.currentSystemDefault()).epochSeconds
-                        }/${
-                            to.toInstant(timeZone = TimeZone.currentSystemDefault()).epochSeconds
-                        }",
-                    )*/
+                    navController.navigate(
+                        route =
+                            Screen.History(
+                                from = from.toInstant(timeZone = TimeZone.currentSystemDefault()).epochSeconds,
+                                to = to.toInstant(timeZone = TimeZone.currentSystemDefault()).epochSeconds,
+                            ).nameForNavigation,
+                    )
                 },
                 onBackClick = {
                     navController.popBackStack()
                 },
             )
+        }
+        composable(
+            route = Screen.History.NAME,
+            arguments =
+                listOf(
+                    navArgument("from") {
+                        type = NavType.LongType
+                    },
+                    navArgument("to") {
+                        type = NavType.LongType
+                    },
+                ),
+        ) {
+            HistoryScreen()
         }
     }
 }
@@ -57,7 +75,7 @@ private fun Flow<Direction>.observeNavigation(navController: NavController) {
                 }
 
                 else -> {
-                    navController.navigate(route = direction.destination.name) {
+                    navController.navigate(route = direction.destination.nameForNavigation) {
                         launchSingleTop = true
                         direction.popUpTo?.let {
                             popUpTo(route = it.name) {
