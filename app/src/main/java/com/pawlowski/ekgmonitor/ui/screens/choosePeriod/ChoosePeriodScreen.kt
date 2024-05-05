@@ -135,7 +135,7 @@ private fun ChooseTimeRow(
             onClick = { showChosenFromDialog.value = true },
             modifier = Modifier.weight(weight = 1f),
         )
-        ButanDatePicker(
+        EkgDatePicker(
             showDialog = showChosenFromDialog.value,
             onDismiss = {
                 showChosenFromDialog.value = false
@@ -167,7 +167,7 @@ private fun ChooseTimeRow(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ButanDatePicker(
+private fun EkgDatePicker(
     showDialog: Boolean,
     onDismiss: () -> Unit,
     onConfirm: (LocalDate?) -> Unit,
