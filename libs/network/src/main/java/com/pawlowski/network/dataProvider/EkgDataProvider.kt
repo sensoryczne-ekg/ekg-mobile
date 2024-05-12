@@ -32,8 +32,8 @@ internal class EkgDataProvider
                 method = ElectrocardiogramGrpcKt.ElectrocardiogramCoroutineStub::listRecords,
                 request =
                     Api.Filter.newBuilder()
-                        .setStart(from)
-                        .setEnd(to)
+                        .setStart(from * 1000L)
+                        .setEnd(to * 1000L)
                         .build(),
             ).recordsList.map {
                 it.toDomain()
