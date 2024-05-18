@@ -56,6 +56,7 @@ android {
 dependencies {
     implementation(project(":libs:network"))
     implementation(project(":libs:dataStore"))
+    implementation(project(":libs:detectors"))
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
