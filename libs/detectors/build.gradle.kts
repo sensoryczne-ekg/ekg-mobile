@@ -29,4 +29,5 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(platform(libs.org.jetbrains.kotlinx.kotlinx.serialization.bom))
     implementation(libs.bundles.serialization)
+    implementation("com.github.psambit9791:jdsp:0.8.0")
 }
