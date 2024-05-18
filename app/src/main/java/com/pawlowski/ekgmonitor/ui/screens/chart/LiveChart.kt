@@ -16,7 +16,10 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-fun LiveChart(records: ImmutableList<EkgRecord>) {
+fun LiveChart(
+    records: ImmutableList<EkgRecord>,
+    indexesToShowPeeks: ImmutableList<Int>,
+) {
     Column {
         val isAutoScrolling =
             remember {
@@ -31,10 +34,11 @@ fun LiveChart(records: ImmutableList<EkgRecord>) {
 
         val ekgRecords =
             remember(records) {
-                records.map {
+                records.mapIndexed { index, ekgRecord ->
                     ChartNew.Record(
-                        timestamp = it.timestamp,
-                        value = it.value.toInt(),
+                        timestamp = ekgRecord.timestamp,
+                        value = ekgRecord.value.toInt(),
+                        showPeek = indexesToShowPeeks.contains(index),
                     )
                 }
             }

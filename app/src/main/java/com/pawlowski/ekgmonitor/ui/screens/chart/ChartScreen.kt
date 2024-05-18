@@ -22,6 +22,7 @@ import com.pawlowski.ekgmonitor.domain.Resource
 import com.pawlowski.ekgmonitor.ui.components.errorItem.ErrorItem
 import com.pawlowski.ekgmonitor.ui.screens.settings.ChangeNetworkBottomSheet
 import com.pawlowski.network.EkgRecord
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
@@ -65,7 +66,10 @@ internal fun ChartScreen(
 
         when (state.recordsResource) {
             is Resource.Success -> {
-                LiveChart(records = state.recordsResource.data.toPersistentList())
+                LiveChart(
+                    records = state.recordsResource.data.toPersistentList(),
+                    indexesToShowPeeks = state.indexesToShowPeeks,
+                )
             }
             is Resource.Loading -> {
                 Box(
@@ -109,6 +113,7 @@ private fun ChartScreenPreview() {
                             },
                     ),
                 currentServerAddress = null,
+                indexesToShowPeeks = persistentListOf(),
             ),
     ) {}
 }

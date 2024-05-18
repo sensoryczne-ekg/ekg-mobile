@@ -48,6 +48,7 @@ android {
     }
     packaging {
         resources {
+            excludes.addAll(listOf("META-INF/*", "META-INF/LICENSE.md", "META-INF/LICENSE-notice.md", "META-INF/DEPENDENCIES"))
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }

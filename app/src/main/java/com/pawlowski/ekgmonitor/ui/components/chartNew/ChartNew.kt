@@ -48,6 +48,7 @@ interface ChartNew {
     data class Record(
         val timestamp: Long,
         val value: Int,
+        val showPeek: Boolean = false,
     )
 
     data class Axis(
@@ -241,10 +242,14 @@ private fun ChartInternal(
         )
 
         translate(left = translateOffset()) {
-            scaledRecords.forEach { (points, color) ->
+            scaledRecords.forEach { (points, color, peeks) ->
                 drawRecordsPath(
                     recordsPoints = points,
                     color = color,
+                )
+                drawPeeks(
+                    peekPoints = peeks,
+                    color = Color.Green,
                 )
             }
             (widthConfig as? WidthConfig.Scrollable)?.let {
@@ -264,6 +269,7 @@ private fun ChartInternal(
 private data class AxisOffsetsAndColor(
     val offsets: ImmutableList<Offset>,
     val color: Color,
+    val peeks: ImmutableList<Offset>,
 )
 
 private fun ImmutableList<Axis>.toScaledOffsets(
@@ -271,19 +277,27 @@ private fun ImmutableList<Axis>.toScaledOffsets(
     scaleX: Float,
     scaleY: Float,
     canvasHeight: Float,
-): ImmutableList<AxisOffsetsAndColor> =
-    map { axis ->
+): ImmutableList<AxisOffsetsAndColor> {
+    fun ChartNew.Record.toOffset() =
+        Offset(
+            x = (timestamp - minTimestamp) * scaleX,
+            y = (canvasHeight - (value * scaleY)),
+        )
+
+    return map { axis ->
         AxisOffsetsAndColor(
             offsets =
                 axis.records.map { record ->
-                    Offset(
-                        x = (record.timestamp - minTimestamp) * scaleX,
-                        y = (canvasHeight - (record.value * scaleY)),
-                    )
+                    record.toOffset()
                 }.toPersistentList(),
             color = axis.color,
+            peeks =
+                axis.records.filter { it.showPeek }.map { record ->
+                    record.toOffset()
+                }.toPersistentList(),
         )
     }.toPersistentList()
+}
 
 private fun DrawScope.drawTimestampsLabels(
     minTimestamp: Long,
@@ -351,6 +365,28 @@ private fun DrawScope.drawRecordsPath(
                 width = 3.dp.toPx(),
             ),
     )
+}
+
+private fun DrawScope.drawPeeks(
+    peekPoints: List<Offset>,
+    color: Color,
+) {
+    peekPoints.forEach {
+        drawLine(
+            start =
+                Offset(
+                    x = it.x,
+                    y = 0f,
+                ),
+            end =
+                Offset(
+                    x = it.x,
+                    y = size.height,
+                ),
+            color = color,
+            strokeWidth = 1.dp.toPx(),
+        )
+    }
 }
 
 private fun DrawScope.drawHorizontalHelperLines(

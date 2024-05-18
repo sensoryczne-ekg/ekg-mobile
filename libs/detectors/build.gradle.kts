@@ -29,5 +29,8 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     implementation(platform(libs.org.jetbrains.kotlinx.kotlinx.serialization.bom))
     implementation(libs.bundles.serialization)
-    implementation("com.github.psambit9791:jdsp:0.8.0")
+    implementation("com.github.psambit9791:jdsp:0.8.0") {
+        exclude(group = "org.apache.maven.surefire", module = "common-java")
+        exclude(group = "org.apache.maven.surefire", module = "surefire-api")
+    }
 }
