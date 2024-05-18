@@ -6,6 +6,7 @@ import com.pawlowski.ekgmonitor.BaseMviViewModel
 import com.pawlowski.ekgmonitor.domain.Resource
 import com.pawlowski.ekgmonitor.domain.RetrySharedFlow
 import com.pawlowski.ekgmonitor.domain.resourceFlowWithRetrying
+import com.pawlowski.ekgmonitor.domain.useCase.Classify
 import com.pawlowski.ekgmonitor.domain.useCase.GetRecords
 import com.pawlowski.ekgmonitor.ui.navigation.Back
 import com.pawlowski.ekgmonitor.ui.navigation.Screen
@@ -19,11 +20,13 @@ internal class HistoryViewModel
     @Inject
     constructor(
         private val getRecords: GetRecords,
+        private val classify: Classify,
         savedStateHandle: SavedStateHandle,
     ) : BaseMviViewModel<HistoryState, HistoryEvent, Screen.History.HistoryDirection>(
             initialState =
                 HistoryState(
                     recordsResource = Resource.Loading,
+                    classifyResource = Resource.Loading,
                 ),
         ) {
         private val from = savedStateHandle.get<Long>("from")!!
@@ -41,6 +44,19 @@ internal class HistoryViewModel
                 }.collect {
                     updateState {
                         copy(recordsResource = it)
+                    }
+                }
+            }
+
+            viewModelScope.launch {
+                resourceFlowWithRetrying(retrySharedFlow = retrySharedFlow) {
+                    classify(
+                        from = from,
+                        to = to,
+                    )
+                }.collect {
+                    updateState {
+                        copy(classifyResource = it)
                     }
                 }
             }

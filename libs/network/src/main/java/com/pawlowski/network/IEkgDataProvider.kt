@@ -9,4 +9,9 @@ interface IEkgDataProvider {
         from: Long,
         to: Long,
     ): List<EkgRecord>
+
+    suspend fun classify(
+        from: Long,
+        to: Long,
+    ): Classification
 }
