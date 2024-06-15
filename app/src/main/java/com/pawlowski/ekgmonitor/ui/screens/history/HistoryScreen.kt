@@ -139,23 +139,23 @@ private fun ClassificationTable(
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 Text(text = "Klasyfikacja")
                 ClassificationRow(
-                    label = "n: ",
+                    label = "Normalny: ",
                     value = classificationResource.data.n.toString(),
                 )
                 ClassificationRow(
-                    label = "s: ",
+                    label = "Nadkomorowe pobudzenie ektopowe: ",
                     value = classificationResource.data.s.toString(),
                 )
                 ClassificationRow(
-                    label = "v: ",
+                    label = "Komorowe pobudzenie ektopowe: ",
                     value = classificationResource.data.v.toString(),
                 )
                 ClassificationRow(
-                    label = "f: ",
+                    label = "Rytm fuzyjny: ",
                     value = classificationResource.data.f.toString(),
                 )
                 ClassificationRow(
-                    label = "q: ",
+                    label = "Nieznane: ",
                     value = classificationResource.data.q.toString(),
                 )
             }

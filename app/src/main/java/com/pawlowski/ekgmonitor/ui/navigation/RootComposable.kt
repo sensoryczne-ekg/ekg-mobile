@@ -14,7 +14,8 @@ import androidx.navigation.navArgument
 import com.pawlowski.ekgmonitor.ui.screens.chart.ChartScreen
 import com.pawlowski.ekgmonitor.ui.screens.chart.ChartViewModel
 import com.pawlowski.ekgmonitor.ui.screens.choosePeriod.ChoosePeriodScreen
-import com.pawlowski.ekgmonitor.ui.screens.history.HistoryDestination
+import com.pawlowski.ekgmonitor.ui.screens.history.HistoryScreen
+import com.pawlowski.ekgmonitor.ui.screens.history.HistoryViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
@@ -60,7 +61,12 @@ internal fun RootComposable() {
                     },
                 ),
         ) {
-            HistoryDestination()
+            val viewModel = hiltViewModel<HistoryViewModel>()
+            HistoryScreen(
+                state = viewModel.stateFlow.collectAsStateWithLifecycle().value,
+                onNewEvent = viewModel::onNewEvent,
+            )
+            viewModel.navigationFlow.observeNavigation(navController = navController)
         }
     }
 }
